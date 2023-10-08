@@ -1,9 +1,12 @@
 import { useState } from "react";
 import Card from "./components/Card";
 import { nanoid } from "nanoid";
+import { useEffect } from "react";
+import Confetti from "react-confetti";
 
 const App = () => {
   const [playCards, setPlayCards] = useState(allNewDice());
+  const [gotThemAll, setGotThemAll] = useState(false);
 
   function generateCards() {
     return {
@@ -22,11 +25,16 @@ const App = () => {
   }
 
   function rollCards() {
-    setPlayCards((oldCard) =>
-      oldCard.map((card) => {
-        return card.isHeld ? card : generateCards();
-      })
-    );
+    if (!gotThemAll) {
+      setPlayCards((oldCard) =>
+        oldCard.map((card) => {
+          return card.isHeld ? card : generateCards();
+        })
+      ) 
+    } else {
+      setGotThemAll(false)
+      setPlayCards(allNewDice)
+    }
   }
 
   function flipCard(id) {
@@ -36,6 +44,17 @@ const App = () => {
       })
     );
   }
+
+  useEffect(() => {
+    const allHeld = playCards.every((item) => item.isHeld);
+    const firstValue = playCards[0].value;
+    const allTheSameValue = playCards.every(
+      (card) => card.value === firstValue
+    );
+    if (allHeld && allTheSameValue) {
+      setGotThemAll(true);
+    }
+  }, [playCards]);
 
   const cardsElement = playCards.map((card) => (
     <Card
@@ -48,11 +67,19 @@ const App = () => {
 
   return (
     <main>
+      {gotThemAll && <Confetti />}
       <h1 className="title">Get Them All</h1>
-      <p className="instructions ">Roll until all cards are the same. Click each die to freeze it at its current value between rolls.</p>
+      <p className="instructions ">
+        Roll until all cards are the same. Click each die to freeze it at its
+        current value between rolls. <br /> Don&apos;t forget the number you
+        flipped!
+      </p>
       <div className="card-container">{cardsElement}</div>
-      <button className="roll-cards" onClick={rollCards}>
-        Roll Cards
+      <button
+        className="roll-cards"
+        onClick={rollCards}
+      >
+        {gotThemAll ? "New Game" : "Roll Cards"}
       </button>
     </main>
   );
