@@ -48,6 +48,8 @@ const App = () => {
 
   return (
     <main>
+      <h1 className="title">Get Them All</h1>
+      <p className="instructions ">Roll until all cards are the same. Click each die to freeze it at its current value between rolls.</p>
       <div className="card-container">{cardsElement}</div>
       <button className="roll-cards" onClick={rollCards}>
         Roll Cards
