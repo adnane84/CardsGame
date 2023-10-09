@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import Confetti from "react-confetti";
 
 const App = () => {
-  const [playCards, setPlayCards] = useState(allNewDice());
+  const [playCards, setPlayCards] = useState(allNewCard());
   const [gotThemAll, setGotThemAll] = useState(false);
 
   function generateCards() {
@@ -16,7 +16,7 @@ const App = () => {
     };
   }
 
-  function allNewDice() {
+  function allNewCard() {
     const cards = [];
     for (let i = 0; i < 10; i++) {
       cards.push(generateCards());
@@ -33,7 +33,7 @@ const App = () => {
       ) 
     } else {
       setGotThemAll(false)
-      setPlayCards(allNewDice)
+      setPlayCards(alwCardice)
     }
   }
 
