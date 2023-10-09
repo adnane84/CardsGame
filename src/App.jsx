@@ -7,6 +7,7 @@ import Confetti from "react-confetti";
 const App = () => {
   const [playCards, setPlayCards] = useState(allNewCards());
   const [gotThemAll, setGotThemAll] = useState(false);
+  const [count, setCount] = useState(0);
 
   function generateCards() {
     return {
@@ -30,10 +31,12 @@ const App = () => {
         oldCard.map((card) => {
           return card.isHeld ? card : generateCards();
         })
-      ) 
+      )
+      setCount(prevCount => prevCount + 1) 
     } else {
       setGotThemAll(false)
       setPlayCards(allNewCards)
+      setCount(0)
     }
   }
 
@@ -44,6 +47,8 @@ const App = () => {
       })
     );
   }
+
+  
 
   useEffect(() => {
     const allHeld = playCards.every((item) => item.isHeld);
@@ -66,7 +71,9 @@ const App = () => {
   ));
 
   return (
+  
     <main>
+      <h3>Your Record : {gotThemAll ? count : ''}</h3>
       {gotThemAll && <Confetti />}
       <h1 className="title">Get Them All</h1>
       <p className="instructions ">
@@ -81,6 +88,7 @@ const App = () => {
       >
         {gotThemAll ? "New Game" : "Roll Cards"}
       </button>
+      <h3>Count : {count}</h3>
     </main>
   );
 };
