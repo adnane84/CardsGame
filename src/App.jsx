@@ -5,9 +5,14 @@ import { useEffect } from "react";
 import Confetti from "react-confetti";
 
 const App = () => {
-  const [playCards, setPlayCards] = useState(allNewCards());
+  const [playCards, setPlayCards] = useState(() => {
+    const saveCards = JSON.parse(localStorage.getItem("playCards"));
+    return saveCards || allNewCards();
+  });
   const [gotThemAll, setGotThemAll] = useState(false);
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(
+    parseInt(localStorage.getItem("count")) || 0
+  );
 
   function generateCards() {
     return {
@@ -31,12 +36,12 @@ const App = () => {
         oldCard.map((card) => {
           return card.isHeld ? card : generateCards();
         })
-      )
-      setCount(prevCount => prevCount + 1) 
+      );
+      setCount((prevCount) => prevCount + 1);
     } else {
-      setGotThemAll(false)
-      setPlayCards(allNewCards)
-      setCount(0)
+      setGotThemAll(false);
+      setPlayCards(allNewCards);
+      setCount(0);
     }
   }
 
@@ -48,8 +53,6 @@ const App = () => {
     );
   }
 
-  
-
   useEffect(() => {
     const allHeld = playCards.every((item) => item.isHeld);
     const firstValue = playCards[0].value;
@@ -59,7 +62,10 @@ const App = () => {
     if (allHeld && allTheSameValue) {
       setGotThemAll(true);
     }
-  }, [playCards]);
+
+    localStorage.setItem("playCards", JSON.stringify(playCards));
+    localStorage.setItem("count", JSON.stringify(count));
+  }, [playCards, count]);
 
   const cardsElement = playCards.map((card) => (
     <Card
@@ -71,9 +77,8 @@ const App = () => {
   ));
 
   return (
-  
     <main>
-      <h3>Your Record : {gotThemAll ? count : ''}</h3>
+      <h3>Your Record : {gotThemAll ? count : ""}</h3>
       {gotThemAll && <Confetti />}
       <h1 className="title">Get Them All</h1>
       <p className="instructions ">
@@ -82,10 +87,7 @@ const App = () => {
         flipped!
       </p>
       <div className="card-container">{cardsElement}</div>
-      <button
-        className="roll-cards"
-        onClick={rollCards}
-      >
+      <button className="roll-cards" onClick={rollCards}>
         {gotThemAll ? "New Game" : "Roll Cards"}
       </button>
       <h3>Count : {count}</h3>
